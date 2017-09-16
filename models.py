@@ -18,7 +18,7 @@ class Card(db.Model):
     listId = db.Column(db.Integer, db.ForeignKey('list.id'))
     list = db.relationship('List', backref=db.backref('cards', lazy='dynamic'))
 
-    def __init__(self, title, description, list):
+    def __init__(self, title, description, lst):
         self.title = title
         self.description = description
-        self.list = list
+        self.list = lst
