@@ -7,11 +7,18 @@ from django.db import models
 
 
 class List(models.Model):
-    title = models.CharField()
+    """
+    List Model: Is associated with one board and has many Cards.
+    order parameter used to order lists on output.
+    """
+    title = models.CharField(max_length=500)
     order = models.IntegerField()
 
 
 class Card(models.Model):
-    title = models.CharField()
-    description = models.CharField()
-    list = models.ForeignKey(List)
+    """
+    Cards are associated with one list and have a title and a description.
+    """
+    title = models.CharField(max_length=500)
+    description = models.CharField(max_length=500)
+    list = models.ForeignKey(List, related_name='cards', on_delete=models.CASCADE)
