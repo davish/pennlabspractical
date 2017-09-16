@@ -37,11 +37,15 @@ def get_card(_id=None):
     :param _id: ID of card
     :return:
     """
+    c = Card.query.get(_id)
+    if c is None:
+        return jsonify({'status': 404})
     if request.method == 'DELETE':
-        Card.query.filter_by(id=_id).delete()
+        db.session.delete(c)
         db.session.commit()
+        return jsonify({'status': 200})
     elif request.method == 'GET':
-        pass
+        return jsonify(c.serialize())
 
 
 @app.route('/list/<_id>', methods=['GET', 'DELETE'])
@@ -52,12 +56,16 @@ def get_list(_id=None):
     :param _id:
     :return:
     """
+    l = List.query.get(_id)
+    if l is None:
+        return jsonify({'status': 404})
     if request.method == 'DELETE':
-        Card.query.filter_by(listId=_id).delete()
-        List.query.filter_by(id=_id).delete()
+        db.session.delete(l.cards)
+        db.session.delete(l)
         db.session.commit()
+        return jsonify({'status': 200})
     elif request.method == 'GET':
-        pass
+        return jsonify(l.serialize())
 
 
 @app.route('/card', methods=['POST'])

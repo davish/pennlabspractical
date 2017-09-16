@@ -10,6 +10,13 @@ class List(db.Model):
         self.title = title
         self.order = order
 
+    def serialize(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'order': self.order
+        }
+
 
 class Card(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -22,3 +29,11 @@ class Card(db.Model):
         self.title = title
         self.description = description
         self.list = lst
+
+    def serialize(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'listId': self.listId
+        }
