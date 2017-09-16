@@ -9,6 +9,16 @@ db = SQLAlchemy(app)
 from models import Card, List
 
 
+def filter_dict(d, l):
+    """
+    Filter dictionary to only contain specific keys
+    :param d: original dictionary
+    :param l: list of keys to include
+    :return: dictionary only containing keys in l
+    """
+    return {k: d[k] for k in d}
+
+
 @app.route('/editlist/<_id>', methods=['POST'])
 def edit_list(_id=None):
     """
@@ -16,7 +26,14 @@ def edit_list(_id=None):
     :param _id: ID of the list to modify
     :return: Success/failure
     """
-    pass
+    l = List.query.get(_id)
+    if l is None:
+        return jsonify({'status': 404})
+
+    data = request.get_json()
+    l.update(filter_dict(data, ['title', 'order']))
+    db.session.commit()
+    return jsonify({'status': 200})
 
 
 @app.route('/editcard/<_id>', methods=['POST'])
@@ -26,7 +43,14 @@ def edit_card(_id=None):
     :param _id: ID of the card to modify
     :return:
     """
-    pass
+    c = Card.query.get(_id)
+    if c is None:
+        return jsonify({'status': 404})
+
+    data = request.get_json()
+    c.update(filter_dict(data, ['title', 'description']))
+    db.session.commit()
+    return jsonify({'status': 200})
 
 
 @app.route('/card/<_id>', methods=['GET', 'DELETE'])

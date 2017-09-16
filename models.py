@@ -1,7 +1,13 @@
 from app import db
 
 
-class List(db.Model):
+class UpdateMixin():
+    def update(self, newdata):
+        for key, value in newdata.items():
+            setattr(self, key, value)
+
+
+class List(db.Model, UpdateMixin):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(500))
     order = db.Column(db.Integer)
@@ -18,7 +24,7 @@ class List(db.Model):
         }
 
 
-class Card(db.Model):
+class Card(db.Model, UpdateMixin):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(500))
     description = db.Column(db.String(500))
