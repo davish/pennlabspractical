@@ -30,28 +30,51 @@ ADD CARD
 </ol>
 
 <script>
-    function processResponse(data) {
-        if (data.status !== 200) {
-            alert('Error code '+ data.status +'\n' + data.message)
-        }
-    }
-    $(document).ready(function() {
+
+
+    function setData() {
+        $('#cardlist').html('');
         $.get('/list/all/cards', function(data) { // get all of the cards associated with lists.
             for (var i = 0; i < data.lists.length; i++) {
                 var val = data.lists[i];
                 // each list object will have a corresponding HTML list
-                var $li = $('<li> <strong>' + val.title + '</strong> (id='+val.id+')</li>');
+                var $li = $('<li> <strong>' + val.title + '</strong> ' +
+                    '(id='+val.id+')' + '(<a href="#" onclick="del(\'list\', '+val.id+')">x</a>) ' +
+                    '</li>');
                 var $ul = $('<ul />');
                 for (var j = 0; j < val.cards.length; j++) {
                     var c = val.cards[j];
                     // append each card, with its title and description, to the list for its parent List
-                    $ul.append('<li><span style="text-decoration: underline;">'+c.title+'</span> <br /><em>' +
+                    $ul.append('<li><span style="text-decoration: underline;">'+c.title+'</span> ' +
+                        '(<a href="#" onclick="del(\'card\', '+c.id+')">x</a>) ' +
+                        '<br /><em>' +
                         c.description +'</em></li>')
                 }
                 $ul.appendTo($li); // add that list of cards to the parent element
                 $('#cardlist').append($li); // add the List representation to the complete list of cards.
             }
         })
+    }
+    function processResponse(data) {
+        if (data.status >= 300 || data.status < 200) {
+            alert('Error code '+ data.status +'\n' + data.message)
+        }
+        setData()
+    }
+
+
+
+    function del(type, id) {
+        $.ajax({
+          type: "DELETE",
+          url: '/'+type+'/'+id,
+          success: processResponse,
+          contentType: "application/json",
+          dataType: 'json'
+        });
+    }
+    $(document).ready(function() {
+        setData();
     });
     $('#addlist').submit(function(e) {
         e.preventDefault();
@@ -65,7 +88,7 @@ ADD CARD
           contentType: "application/json",
           dataType: 'json'
         });
-        location.reload();
+//        setData();
         return false;
     });
 
@@ -81,7 +104,7 @@ ADD CARD
           dataType: 'json',
           contentType: "application/json"
         });
-        location.reload();
+//        setData();
         return false;
     });
 

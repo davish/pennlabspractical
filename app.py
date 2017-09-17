@@ -65,7 +65,9 @@ def get_card(_id=None):
         db.session.commit()
         return jsonify({'status': 200})
     elif request.method == 'GET':
-        return jsonify(c.serialize().update({'status': 200}))  # return the serialized card with a status code.
+        r = c.serialize()
+        r['status'] = 200
+        return jsonify(r)  # return the serialized card with a status code.
 
 
 @app.route('/list/<_id>', methods=['GET', 'DELETE'])
@@ -80,12 +82,15 @@ def get_list(_id=None):
     if l is None:
         return jsonify({'status': 404})
     if request.method == 'DELETE':
-        db.session.delete(l.cards)  # first delete all cards associated with the list.
+        for c in l.cards:  # first delete all cards associated with the list.
+            db.session.delete(c)
         db.session.delete(l)
         db.session.commit()
         return jsonify({'status': 200})
     elif request.method == 'GET':
-        return jsonify(l.serialize().update({'status': 200}))  # return the serialized list with a status code.
+        r = l.serialize()
+        r['status'] = 200
+        return jsonify(r)  # return the serialized list with a status code.
 
 
 @app.route('/card', methods=['POST'])
