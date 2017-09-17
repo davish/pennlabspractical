@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -174,6 +174,11 @@ def edit_card(_id=None):
 @app.route('/form', methods=['GET'])
 def show_form():
     return render_template('input.html')
+
+
+@app.route('/', methods=['GET'])
+def index():
+    return redirect('/form')
 
 if __name__ == '__main__':
     app.run()
