@@ -21,16 +21,27 @@ or query the API directly with an API browser like [Postman](https://www.getpost
     and your app is pushed live to a server.
 
 ## API Endpoints
+Important note: both requests and responses for the API are in JSON format.
+
 Along with all the API endpoints in the specification, 
 there are some addional endpoints which help with the usability of the API:
 
 - `GET` `/list/:listId/cards`
+    - URL Parameters
+        - `listId`: ID of the list whose cards to display
     - Given a `listId`, return all of the cards associated with the list.
 - `GET` `/list/all/cards`
     - Return all lists with their associated cards.
     
 - `GET` `/lists`
     - Return all lists (without their associated cards).
+    
+- `POST` `/editcard/:cardId`
+    - URL Parameters
+        - `cardId`: ID of the card to update
+    - JSON Parameters:
+        - `title`
+        - `description`
     
 ## Notable Files
 - `app.py`: Contains the API routes and the functions that define their behavior.

@@ -103,7 +103,10 @@ def add_card():
     data = request.get_json()
     if data is None:
         return jsonify({'status': 400, 'message': 'no JSON in request body.'})
-    l = List.query.get(data.get('listId', 1))
+    if 'listId' not in data or data['listId'] is None:
+        return jsonify({'status': 400, 'message': 'must provide listId to create a card.'})
+
+    l = List.query.get(data['listId'])
 
     if l is None:
         return jsonify({'status': 400, 'message': 'given listId does not exist.'})
@@ -174,7 +177,14 @@ def edit_card(_id=None):
     if data is None:
         return jsonify({'status': 400, 'message': 'no JSON in request body.'})
 
+    if 'listId' in data:
+        l = List.query.get(data['listId'])
+        if l is None:
+            return jsonify({'status': 400, 'message': 'no list exists with given listId'})
+        c.list = l
+
     c.update(filter_dict(data, ['title', 'description']))
+
     db.session.commit()
     return jsonify({'status': 200})
 

@@ -12,7 +12,8 @@ class UpdateMixin():
         :return:
         """
         for key, value in newdata.items():
-            setattr(self, key, value)
+            if value is not None:
+                setattr(self, key, value)
 
 
 class List(db.Model, UpdateMixin):

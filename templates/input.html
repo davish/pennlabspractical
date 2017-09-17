@@ -7,16 +7,19 @@
 <body>
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 
-ADD LIST
+ADD/MODIFY LIST
 <form id="addlist">
-    <input type="text" name="title" placeholder="title"/>
+    <input type="text" name="id" placeholder="listId" /> (leave blank to create new list) <br />
+    <input type="text" name="title" placeholder="title"/> <br />
+    <input type="text" name="order" placeholder="order" /> (leave blank when creating new list) <br />
     <input type="submit" />
 </form>
 
 <br /> <br />
 
-ADD CARD
+ADD/MODIFY CARD
 <form id="addcard">
+    <input type="text" name="id" placeholder="cardId" /> (leave blank to create new card) <br />
     <input type="text" name="title" placeholder="title" /> <br />
     <input name="listId" placeholder="listId" /> <br />
     <textarea name="description" placeholder="Description"></textarea> <br />
@@ -46,6 +49,7 @@ ADD CARD
                     var c = val.cards[j];
                     // append each card, with its title and description, to the list for its parent List
                     $ul.append('<li><span style="text-decoration: underline;">'+c.title+'</span> ' +
+                        '(id='+c.id+')' +
                         '(<a href="#" onclick="del(\'card\', '+c.id+')">x</a>) ' +
                         '<br /><em>' +
                         c.description +'</em></li>')
@@ -78,11 +82,18 @@ ADD CARD
     });
     $('#addlist').submit(function(e) {
         e.preventDefault();
-        var g = {title: e.target.title.value};
-        e.target.title.value = '';
+        var g = {title: e.target.title.value || null};
+        var url = '/list';
+        if (e.target.id.value) {
+            g.order = e.target.order.value || null;
+            url = '/editlist/' + e.target.id.value
+        }
+
+        e.target.title.value = e.target.id.value = e.target.order.value = '';
+
         $.ajax({
           type: "POST",
-          url: '/list',
+          url: url,
           data: JSON.stringify(g),
           success: processResponse,
           contentType: "application/json",
@@ -94,11 +105,18 @@ ADD CARD
 
     $('#addcard').submit(function(e) {
         e.preventDefault();
-        var g = {title: e.target.title.value, listId: parseInt(e.target.listId.value), description: e.target.description.value};
-        e.target.title.value = e.target.description.value = '';
+        var g = {
+            title: e.target.title.value || null,
+            listId: parseInt(e.target.listId.value) || null,
+            description: e.target.description.value || null} ;
+        var url = '/card';
+        if (e.target.id.value) {
+            url = '/editcard/' + e.target.id.value
+        }
+        e.target.id.value = e.target.title.value = e.target.description.value = '';
         $.ajax({
           type: "POST",
-          url: '/card',
+          url: url,
           data: JSON.stringify(g),
           success: processResponse,
           dataType: 'json',
