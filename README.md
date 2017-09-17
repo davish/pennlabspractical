@@ -42,7 +42,9 @@ there are some addional endpoints which help with the usability of the API:
     - JSON Parameters:
         - `title`
         - `description`
+        - `listId` (note: changing listId associates the card with a new list)
     
 ## Notable Files
 - `app.py`: Contains the API routes and the functions that define their behavior.
 - `models.py`: Definitions for the Card and List entities and associated helper functions.
+- `templates/input.html`: Defines forms and displays for the front-end test page.
