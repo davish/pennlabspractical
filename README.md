@@ -37,6 +37,7 @@ there are some addional endpoints which help with the usability of the API:
     - Return all lists (without their associated cards).
     
 - `POST` `/editcard/:cardId`
+    - Modify an existing card.
     - URL Parameters
         - `cardId`: ID of the card to update
     - JSON Parameters:
