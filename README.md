@@ -1,7 +1,7 @@
 # Davis Haupt - Penn Labs Practical
 
 Live demo at [https://davishaupt-pennlabspractical.herokuapp.com](https://davishaupt-pennlabspractical.herokuapp.com). 
-You can use the provided form to add new elements and view the contents of the database, 
+You can use the provided form, 
 or query the API directly with an API browser like [Postman](https://www.getpostman.com/) to access all the endpoints.
 
 ## Stack:
