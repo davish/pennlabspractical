@@ -30,6 +30,11 @@ ADD CARD
 </ol>
 
 <script>
+    function processResponse(data) {
+        if (data.status !== 200) {
+            alert('Error code '+ data.status +'\n' + data.message)
+        }
+    }
     $(document).ready(function() {
         $.get('/list/all/cards', function(data) { // get all of the cards associated with lists.
             for (var i = 0; i < data.lists.length; i++) {
@@ -56,9 +61,7 @@ ADD CARD
           type: "POST",
           url: '/list',
           data: JSON.stringify(g),
-          success: function(data) {
-              console.log(data);
-          },
+          success: processResponse,
           contentType: "application/json",
           dataType: 'json'
         });
@@ -74,15 +77,15 @@ ADD CARD
           type: "POST",
           url: '/card',
           data: JSON.stringify(g),
-          success: function(data) {
-              console.log(data);
-          },
+          success: processResponse,
           dataType: 'json',
           contentType: "application/json"
         });
         location.reload();
         return false;
     });
+
+
 </script>
 </body>
 </html>

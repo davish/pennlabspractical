@@ -100,6 +100,9 @@ def add_card():
         return jsonify({'status': 400, 'message': 'no JSON in request body.'})
     l = List.query.get(data.get('listId', 1))
 
+    if l is None:
+        return jsonify({'status': 400, 'message': 'given listId does not exist.'})
+
     c = Card(data.get('title', ''),
              data.get('description', ''),
              l)
