@@ -28,6 +28,7 @@ def get_cards_from_list(_id):
     """
 
     if _id == 'all':
+        # If the URL accessed is '/list/all/cards', return a JSON document with
         ls = List.query.order_by(List.order.asc())
         return jsonify({'lists': [l.serialize_nested() for l in ls]})
 
@@ -64,7 +65,7 @@ def get_card(_id=None):
         db.session.commit()
         return jsonify({'status': 200})
     elif request.method == 'GET':
-        return jsonify(c.serialize())
+        return jsonify(c.serialize().update({'status': 200}))  # return the serialized card with a status code.
 
 
 @app.route('/list/<_id>', methods=['GET', 'DELETE'])
@@ -84,7 +85,7 @@ def get_list(_id=None):
         db.session.commit()
         return jsonify({'status': 200})
     elif request.method == 'GET':
-        return jsonify(l.serialize())
+        return jsonify(l.serialize().update({'status': 200}))  # return the serialized list with a status code.
 
 
 @app.route('/card', methods=['POST'])
@@ -95,6 +96,8 @@ def add_card():
     :return:
     """
     data = request.get_json()
+    if data is None:
+        return jsonify({'status': 400, 'message': 'no JSON in request body.'})
     l = List.query.get(data.get('listId', 1))
 
     c = Card(data.get('title', ''),
@@ -113,6 +116,9 @@ def add_list():
     :return:
     """
     data = request.get_json()
+    if data is None:
+        return jsonify({'status': 400, 'message': 'no JSON in request body.'})
+
     lists = List.query.order_by(List.order.desc())
     o = lists[0].order+1 if lists.count() > 0 else 0
     l = List(data.get('title', ''), o)
@@ -134,9 +140,12 @@ def edit_list(_id=None):
         return jsonify({'status': 404})
 
     data = request.get_json()
+    if data is None:
+        return jsonify({'status': 400, 'message': 'no JSON in request body.'})
+
     l.update(filter_dict(data, ['title', 'order']))
     if List.query.filter(List.order == l.order, List.id != l.id).count() > 0:
-        return jsonify({'status': 400, 'message': 'list exists with this order already.'})
+        return jsonify({'status': 400, 'message': 'another list exists with this order already.'})
 
     db.session.commit()
     return jsonify({'status': 200})
@@ -154,6 +163,9 @@ def edit_card(_id=None):
         return jsonify({'status': 404})
 
     data = request.get_json()
+    if data is None:
+        return jsonify({'status': 400, 'message': 'no JSON in request body.'})
+
     c.update(filter_dict(data, ['title', 'description']))
     db.session.commit()
     return jsonify({'status': 200})
