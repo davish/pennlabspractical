@@ -19,38 +19,18 @@ def filter_dict(d, l):
     return {k: d[k] for k in d}
 
 
-@app.route('/editlist/<_id>', methods=['POST'])
-def edit_list(_id=None):
-    """
-    Modify a list with a POST request containing JSON.
-    :param _id: ID of the list to modify
-    :return: Success/failure
-    """
+@app.route('/list/<_id>/cards', methods=['GET'])
+def get_cards_from_list(_id):
     l = List.query.get(_id)
     if l is None:
         return jsonify({'status': 404})
 
-    data = request.get_json()
-    l.update(filter_dict(data, ['title', 'order']))
-    db.session.commit()
-    return jsonify({'status': 200})
+    return jsonify({'result': 200, 'cards': [c.serialize() for c in l.cards]})
 
 
-@app.route('/editcard/<_id>', methods=['POST'])
-def edit_card(_id=None):
-    """
-    Modify a card with a POST request containing JSON.
-    :param _id: ID of the card to modify
-    :return:
-    """
-    c = Card.query.get(_id)
-    if c is None:
-        return jsonify({'status': 404})
-
-    data = request.get_json()
-    c.update(filter_dict(data, ['title', 'description']))
-    db.session.commit()
-    return jsonify({'status': 200})
+@app.route('/lists', methods=['GET'])
+def get_all_lists():
+    return jsonify({'result': 200, 'lists': [l.serialize() for l in List.query.order_by(List.order.asc())]})
 
 
 @app.route('/card/<_id>', methods=['GET', 'DELETE'])
@@ -124,4 +104,37 @@ def add_list():
     db.session.add(l)
     db.session.commit()
 
+    return jsonify({'status': 200})
+
+@app.route('/editlist/<_id>', methods=['POST'])
+def edit_list(_id=None):
+    """
+    Modify a list with a POST request containing JSON.
+    :param _id: ID of the list to modify
+    :return: Success/failure
+    """
+    l = List.query.get(_id)
+    if l is None:
+        return jsonify({'status': 404})
+
+    data = request.get_json()
+    l.update(filter_dict(data, ['title', 'order']))
+    db.session.commit()
+    return jsonify({'status': 200})
+
+
+@app.route('/editcard/<_id>', methods=['POST'])
+def edit_card(_id=None):
+    """
+    Modify a card with a POST request containing JSON.
+    :param _id: ID of the card to modify
+    :return:
+    """
+    c = Card.query.get(_id)
+    if c is None:
+        return jsonify({'status': 404})
+
+    data = request.get_json()
+    c.update(filter_dict(data, ['title', 'description']))
+    db.session.commit()
     return jsonify({'status': 200})
