@@ -23,6 +23,11 @@ class List(db.Model, UpdateMixin):
             'order': self.order
         }
 
+    def serialize_nested(self):
+        r = self.serialize()
+        r['cards'] = [c.serialize() for c in self.cards]
+        return r
+
 
 class Card(db.Model, UpdateMixin):
     id = db.Column(db.Integer, primary_key=True)

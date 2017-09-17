@@ -26,6 +26,11 @@ def get_cards_from_list(_id):
     :param _id: list ID
     :return: list of cards
     """
+
+    if _id == 'all':
+        ls = List.query.order_by(List.order.asc())
+        return jsonify({'lists': [l.serialize_nested() for l in ls]})
+
     l = List.query.get(_id)
     if l is None:
         return jsonify({'status': 404})

@@ -25,11 +25,32 @@ ADD CARD
 
 <br /> <br /> <br />
 
+<ol id="cardlist">
+
+</ol>
+
 <script>
+    $(document).ready(function() {
+        $.get('/list/all/cards', function(data) { // get all of the cards associated with lists.
+            for (var i = 0; i < data.lists.length; i++) {
+                var val = data.lists[i];
+                // each list object will have a corresponding HTML list
+                var $li = $('<li> <strong>' + val.title + '</strong> (id='+val.id+')</li>');
+                var $ul = $('<ul />');
+                for (var j = 0; j < val.cards.length; j++) {
+                    var c = val.cards[j];
+                    // append each card, with its title and description, to the list for its parent List
+                    $ul.append('<li><span style="text-decoration: underline;">'+c.title+'</span> <br /><em>' +
+                        c.description +'</em></li>')
+                }
+                $ul.appendTo($li); // add that list of cards to the parent element
+                $('#cardlist').append($li); // add the List representation to the complete list of cards.
+            }
+        })
+    });
     $('#addlist').submit(function(e) {
         e.preventDefault();
         var g = {title: e.target.title.value};
-        console.log(g);
         e.target.title.value = '';
         $.ajax({
           type: "POST",
@@ -41,13 +62,13 @@ ADD CARD
           contentType: "application/json",
           dataType: 'json'
         });
+        location.reload();
         return false;
     });
 
     $('#addcard').submit(function(e) {
         e.preventDefault();
         var g = {title: e.target.title.value, listId: parseInt(e.target.listId.value), description: e.target.description.value};
-        console.log(g);
         e.target.title.value = e.target.description.value = '';
         $.ajax({
           type: "POST",
@@ -59,6 +80,7 @@ ADD CARD
           dataType: 'json',
           contentType: "application/json"
         });
+        location.reload();
         return false;
     });
 </script>
