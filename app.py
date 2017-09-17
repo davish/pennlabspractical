@@ -30,14 +30,14 @@ def get_cards_from_list(_id):
     if _id == 'all':
         # If the URL accessed is '/list/all/cards', return a JSON document with
         ls = List.query.order_by(List.order.asc())
-        return jsonify({'lists': [l.serialize_nested() for l in ls]})
+        return jsonify({'status': 200, 'lists': [l.serialize_nested() for l in ls]})
 
     l = List.query.get(_id)
     if l is None:
         return jsonify({'status': 404})
 
     # serialize all of the cards to be passed into JSON
-    return jsonify({'result': 200, 'cards': [c.serialize() for c in l.cards]})
+    return jsonify({'status': 200, 'cards': [c.serialize() for c in l.cards]})
 
 
 @app.route('/lists', methods=['GET'])
@@ -46,7 +46,7 @@ def get_all_lists():
     Return all of the lists in the database, ordered by their "order" attribute
     :return:
     """
-    return jsonify({'result': 200, 'lists': [l.serialize() for l in List.query.order_by(List.order.asc())]})
+    return jsonify({'status': 200, 'lists': [l.serialize() for l in List.query.order_by(List.order.asc())]})
 
 
 @app.route('/card/<_id>', methods=['GET', 'DELETE'])
