@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Input Forms</title>
+</head>
+<body>
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+
+ADD LIST
+<form id="addlist">
+    <input type="text" name="title" placeholder="title"/>
+    <input type="submit" />
+</form>
+
+<br /> <br />
+
+ADD CARD
+<form id="addcard">
+    <input type="text" name="title" placeholder="title" /> <br />
+    <input name="listId" placeholder="listId" /> <br />
+    <textarea name="description" placeholder="Description"></textarea> <br />
+    <input type="submit" />
+</form>
+
+<br /> <br /> <br />
+
+<script>
+    $('#addlist').submit(function(e) {
+        e.preventDefault();
+        var g = {title: e.target.title.value};
+        console.log(g);
+        e.target.title.value = '';
+        $.ajax({
+          type: "POST",
+          url: '/list',
+          data: JSON.stringify(g),
+          success: function(data) {
+              console.log(data);
+          },
+          contentType: "application/json",
+          dataType: 'json'
+        });
+        return false;
+    });
+
+    $('#addcard').submit(function(e) {
+        e.preventDefault();
+        var g = {title: e.target.title.value, listId: parseInt(e.target.listId.value), description: e.target.description.value};
+        console.log(g);
+        e.target.title.value = e.target.description.value = '';
+        $.ajax({
+          type: "POST",
+          url: '/card',
+          data: JSON.stringify(g),
+          success: function(data) {
+              console.log(data);
+          },
+          dataType: 'json',
+          contentType: "application/json"
+        });
+        return false;
+    });
+</script>
+</body>
+</html>

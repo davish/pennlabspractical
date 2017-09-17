@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -152,3 +152,11 @@ def edit_card(_id=None):
     c.update(filter_dict(data, ['title', 'description']))
     db.session.commit()
     return jsonify({'status': 200})
+
+
+@app.route('/form', methods=['GET'])
+def show_form():
+    return render_template('input.html')
+
+if __name__ == '__main__':
+    app.run()
