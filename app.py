@@ -21,15 +21,25 @@ def filter_dict(d, l):
 
 @app.route('/list/<_id>/cards', methods=['GET'])
 def get_cards_from_list(_id):
+    """
+    Get all cards associated with the given listId.
+    :param _id: list ID
+    :return: list of cards
+    """
     l = List.query.get(_id)
     if l is None:
         return jsonify({'status': 404})
 
+    # serialize all of the cards to be passed into JSON
     return jsonify({'result': 200, 'cards': [c.serialize() for c in l.cards]})
 
 
 @app.route('/lists', methods=['GET'])
 def get_all_lists():
+    """
+    Return all of the lists in the database, ordered by their "order" attribute
+    :return:
+    """
     return jsonify({'result': 200, 'lists': [l.serialize() for l in List.query.order_by(List.order.asc())]})
 
 
@@ -64,7 +74,7 @@ def get_list(_id=None):
     if l is None:
         return jsonify({'status': 404})
     if request.method == 'DELETE':
-        db.session.delete(l.cards)
+        db.session.delete(l.cards)  # first delete all cards associated with the list.
         db.session.delete(l)
         db.session.commit()
         return jsonify({'status': 200})
@@ -88,7 +98,7 @@ def add_card():
     db.session.add(c)
     db.session.commit()
 
-    return jsonify({'status': 200})
+    return jsonify({'status': 201})
 
 
 @app.route('/list', methods=['POST'])
@@ -104,7 +114,8 @@ def add_list():
     db.session.add(l)
     db.session.commit()
 
-    return jsonify({'status': 200})
+    return jsonify({'status': 201})
+
 
 @app.route('/editlist/<_id>', methods=['POST'])
 def edit_list(_id=None):
@@ -119,6 +130,9 @@ def edit_list(_id=None):
 
     data = request.get_json()
     l.update(filter_dict(data, ['title', 'order']))
+    if List.query.filter(List.order == l.order, List.id != l.id).count() > 0:
+        return jsonify({'status': 400, 'message': 'list exists with this order already.'})
+
     db.session.commit()
     return jsonify({'status': 200})
 
