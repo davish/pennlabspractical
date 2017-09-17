@@ -84,6 +84,8 @@ ADD/MODIFY CARD
         e.preventDefault();
         var g = {title: e.target.title.value || null};
         var url = '/list';
+        // If there's an entry in the ID field, we are modifying an existing list,
+        // so change the URL and append an order if it exists.
         if (e.target.id.value) {
             g.order = e.target.order.value || null;
             url = '/editlist/' + e.target.id.value
@@ -99,7 +101,6 @@ ADD/MODIFY CARD
           contentType: "application/json",
           dataType: 'json'
         });
-//        setData();
         return false;
     });
 
@@ -122,7 +123,6 @@ ADD/MODIFY CARD
           dataType: 'json',
           contentType: "application/json"
         });
-//        setData();
         return false;
     });
 
